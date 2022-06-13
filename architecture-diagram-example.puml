@@ -1,0 +1,43 @@
+@startuml architecture-diagram-example
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define AzurePuml https://raw.githubusercontent.com/plantuml-stdlib/Azure-PlantUML/release/2-1/dist
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/Databases/all.puml
+!includeurl AzurePuml/Compute/all.puml
+!includeurl AzurePuml/Web/all.puml
+
+!define SPRITESURL https://raw.githubusercontent.com/plantuml-stdlib/gilbarbara-plantuml-sprites/v1.0/sprites
+!includeurl SPRITESURL/auth0.puml
+
+Boundary(azure, "Azure") {
+  AzureWebApp(reactApp, "Web App", "React", "Azure Static Web App")
+
+  Boundary(products, "Products") {
+    AzureAppService(service2, "Products Service", ".Net", "Azure App Service")
+    AzureSqlDatabase(service2database, "Products Database", "SQL Server", "Azure SQL")
+  }
+
+  Boundary(customers, "Customers") {  
+    AzureAppService(service1, "Customers Service", ".Net", "Azure App Service")
+    AzureSqlDatabase(service1database, "Customers Database", "SQL Server", "Azure SQL")
+  }  
+}
+
+Boundary(users, "Users") {
+  Container(auth0, "Auth0", $sprite="auth0")
+}  
+
+reactApp --> service1
+reactApp --> service2
+
+Rel_R(reactApp, auth0, "Sign in")
+
+Rel_D(service2, service2database, "Storage")
+
+Rel_D(service1, service1database, "Storage")
+
+HIDE_STEREOTYPE()
+
+@enduml
